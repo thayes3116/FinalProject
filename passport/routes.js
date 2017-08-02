@@ -1,10 +1,13 @@
 // app/routes.js
+
+var path = require('path');
 module.exports = function(app, passport) {
 
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
-    app.get('/', function(req, res) {
+    app.get('/landing', function(req, res) {
+        console.log("HELL YEAH!");
         res.render('index.ejs'); // load the index.ejs file
     });
 
@@ -20,8 +23,8 @@ module.exports = function(app, passport) {
 
     // process the login form
     app.post('/login', function(req, res){
-        console.log(req.body);
-
+        console.log(req.body);s
+        res.redirect('/profile');
     });
 
      // =====================================
@@ -35,14 +38,14 @@ module.exports = function(app, passport) {
         passport.authenticate('facebook', {
             successRedirect : '/profile',
             failureRedirect : '/'
-        }));
+    }));
 
     // route for logging out
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
     });
-     // =====================================
+    // =====================================
     // GOOGLE ROUTES =======================
     // =====================================
     // send to google to do the authentication
@@ -52,12 +55,23 @@ module.exports = function(app, passport) {
 
     // the callback after google has authenticated the user
     app.get('/auth/google/callback',
+
             passport.authenticate('google', {
                     successRedirect : '/profile',
                     failureRedirect : '/'
     }));
+    // =====================================
+    // TWITTER ROUTES ======================
+    // =====================================
+    // send to twitter to do the authentication
+    app.get('/auth/twitter', passport.authenticate('twitter', { scope : 'email' }));
 
-
+    // handle the callback after twitter has authenticated the user
+    app.get('/auth/twitter/callback',
+        passport.authenticate('twitter', {
+            successRedirect : '/profile',
+            failureRedirect : '/'
+    }));
     // =====================================
     // SIGNUP ==============================
     // =====================================
@@ -68,9 +82,12 @@ module.exports = function(app, passport) {
         res.render('signup.ejs', { message: req.flash('signupMessage') });
     });
 
-    // process the signup form
-    // app.post('/signup', do all our passport stuff here);
-
+     // process the signup form
+    app.post('/signup', passport.authenticate('local-signup', {
+        successRedirect : '/profile', // redirect to the secure profile section
+        failureRedirect : '/signup', // redirect back to the signup page if there is an error
+        failureFlash : true // allow flash messages
+    }));
 
     // =====================================
     // PROFILE SECTION =====================
@@ -78,9 +95,8 @@ module.exports = function(app, passport) {
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
-        });
+        res.sendFile(path.join(__dirname, '../public', 'index.html'));
+
     });
 
     // =====================================

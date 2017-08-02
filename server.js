@@ -26,6 +26,7 @@ mongoose.connect(dbConnectString, function(error){
 require('./config/passport')(passport); // pass passport for configuration
 
 app.set('view engine', 'ejs'); // set up ejs for templating
+app.use(express.static('public'));
 // set up our express application
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
@@ -41,12 +42,6 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 require('./passport/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
-
-// // Import routes and give the server access to them.
-// var routes = require("./controller/controller.js");
-// app.use("/", routes);
-
-
 
 // Listen on port 3000
 app.listen(process.env.PORT || 8080, function() {
