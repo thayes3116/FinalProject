@@ -19,10 +19,9 @@ var hashHistory = router.hashHistory;
 var IndexRoute = router.IndexRoute;
 
 // Reference the high-level components
-var Main = require("../components/Main");
-var Login = require("../components/Login");
-var Signup = require("../components/Signup");
-
+var Main = require("../components/<Main></Main>");
+var Login = require("../components/children/Login");
+var Signup = require("../components/children/Signup");
 
 // Export the Routes
 module.exports = (
@@ -33,7 +32,7 @@ module.exports = (
 
       {/* If user selects Info or Chat show the appropriate component */}
       <Route path="Login" component={Login} />
-      <Route path="SIgnup" component={Signup} />
+      <Route path="Signup" component={Signup} />
 
       {/* If user selects any other path... we get the Info Route */}
       <IndexRoute component={Login} />
